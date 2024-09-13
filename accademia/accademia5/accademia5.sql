@@ -11,3 +11,13 @@ from Persona
 where   AttivitaProgetto.progetto = 'Pegasus' 
         and AttivitaProgetto.persona = Persona.id
 order by Persona.cognome desc;
+
+
+--3
+
+select Persona.nome, Persona.cognome, Persona.posizione
+from (  select Persona.nome, Persona.cognome, Persona.posizione
+        from Persona 
+        where AttivitaProgetto.progetto = 'Pegasus' 
+        and AttivitaProgetto.persona = Persona.id) as pp
+where   pp.posizione
