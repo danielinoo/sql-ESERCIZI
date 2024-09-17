@@ -16,12 +16,77 @@ order by Persona.cognome desc;
 
 
 --3
-select pero
+select  Persona.nome, Persona.cognome
+from Persona
+join Persona pp on Persona.id = AttivitaProgetto.persona
+where AttivitaProgetto.
 
 
 --4
-select Persona.nome , Persona.cognome , Persona.posizione
-from Persona
+select distinct Persona.nome , Persona.cognome , Persona.posizione
+from Persona,Assenza
 where posizione = 'Professore Ordinario' 
 and Assenza.persona = Persona.id
-and Assenza.tipo = 'malattia'
+and Assenza.tipo = 'Malattia'
+
+--5-- vedere senza count
+select pp.nome , pp.cognome
+from Persona,Assenza
+join Persona pp on pp.id = Assenza.id and Assenza.tipo = 'Malattia'
+where pp.posizione = 'Professore Ordinario'
+group by pp.id,pp.nome, pp.cognome
+having count(pp.id) >1
+
+--6--vedere senza count
+select pp.nome , pp.cognome,pp.posizione
+from Persona,AttivitaNonProgettuale
+join Persona pp on pp.id = AttivitaNonProgettuale.persona and AttivitaNonProgettuale.tipo = 'Didattica'
+where pp.posizione = 'Ricercatore'
+group by pp.id,pp.nome, pp.cognome
+having count(pp.id) >= 1
+
+--7-- da vedere senza count
+select pp.nome , pp.cognome,pp.posizione
+from Persona pp,AttivitaNonProgettuale
+where pp.id = AttivitaNonProgettuale.persona 
+and AttivitaNonProgettuale.tipo = 'Didattica'
+and pp.posizione = 'Ricercatore'
+group by pp.id,pp.nome, pp.cognome
+having count(pp.id) > 1
+
+--8
+select pp.nome , pp.cognome
+from Persona pp,AttivitaNonProgettuale,AttivitaProgetto
+where pp.id = AttivitaNonProgettuale.persona 
+and pp.id = AttivitaProgetto.persona
+and AttivitaNonProgettuale.giorno = AttivitaProgetto.giorno
+
+--9
+select pp.nome,pp.cognome,AttivitaNonProgettuale.giorno,Progetto.nome,AttivitaNonProgettuale.tipo,AttivitaNonProgettuale.oreDurata,AttivitaProgetto.tipo,AttivitaProgetto.oreDurata
+from Persona pp, AttivitaNonProgettuale,WP,AttivitaProgetto,Progetto
+where pp.id = AttivitaNonProgettuale.persona 
+and pp.id = AttivitaProgetto.persona
+and AttivitaNonProgettuale.giorno = AttivitaProgetto.giorno
+and AttivitaProgetto.progetto = WP.progetto and AttivitaProgetto.wp = WP.id
+and WP.progetto = Progetto.id
+
+--10
+select Persona.nome,Persona.cognome
+from Persona,Assenza,AttivitaProgetto
+where Persona.id = Assenza.persona and Persona.id = AttivitaProgetto.Persona
+and Assenza.giorno = AttivitaProgetto.giorno
+
+--11
+select Persona.nome,Persona.cognome,Assenza.giorno,Assenza.tipo,Progetto.nome,AttivitaProgetto.oreDurata
+from Persona,Assenza,AttivitaProgetto,Progetto,WP
+where Persona.id = Assenza.persona and Persona.id = AttivitaProgetto.Persona
+and Assenza.giorno = AttivitaProgetto.giorno
+and AttivitaProgetto.progetto = WP.progetto and AttivitaProgetto.wp = WP.id
+and WP.progetto = Progetto.id
+
+--12--da rivedere
+select W1.nome
+from WP, Progetto,WP w1
+where WP.nome = W1.nome
+and WP.progetto = Progetto.id and w1.progetto = Progetto.id
+and w1.progetto <> WP.progetto
