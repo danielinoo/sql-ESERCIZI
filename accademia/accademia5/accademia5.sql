@@ -1,8 +1,9 @@
 --1
 
 select WP.nome , WP.inizio, WP.fine
-from WP
-where WP.nome = 'Pegasus';
+from WP,Progetto
+where WP.progetto = Progetto.id
+and Progetto.nome = 'Pegasus';
 
 --2
 
@@ -17,12 +18,13 @@ order by Persona.cognome desc;
 
 --3
 select distinct pp.nome, pp.cognome, pp.posizione
-from Persona pp
-join AttivitaProgetto a1 on pp.id = a1.persona
-join AttivitaProgetto a2 on  pp.id = a2.persona
-join WP wp on a1.progetto = wp.progetto
-where wp.nome = 'Pegasus'
-and a1.id <> a2.id; 
+from Persona pp,Progetto,WP,AttivitaProgetto a1,AttivitaProgetto a2
+where pp.id = a1.persona
+and a1.progetto = WP.progetto and a1.wp = WP.id
+and a1.progetto  = Progetto.id
+and Progetto.nome = 'Pegasus'
+and a1.id <> a2.id
+and a1.persona= a2.persona;
 
 
 --4
@@ -34,23 +36,26 @@ and Assenza.tipo = 'Malattia';
 
 --5
 select distinct pp.nome ,pp.cognome
-from Persona,Assenza
-join Persona pp on pp.id = Assenza.id and Assenza.tipo = 'Malattia'
-where pp.posizione = 'Professore Ordinario'
-and pp.id > 1;
+from Persona pp,Assenza a1, Assenza, Persona
+where pp.id = a1.id and a1.tipo = 'Malattia'
+and pp.posizione = 'Professore Ordinario'
+and pp.id <> Persona.id
+and a1.giorno <> Assenza.giorno;
 
 --6
 select distinct pp.nome , pp.cognome,pp.posizione
 from Persona,AttivitaNonProgettuale
 join Persona pp on pp.id = AttivitaNonProgettuale.persona and AttivitaNonProgettuale.tipo = 'Didattica'
 where pp.posizione = 'Ricercatore';
+
 --7
 select distinct pp.nome , pp.cognome,pp.posizione
-from Persona pp,AttivitaNonProgettuale
-where pp.id = AttivitaNonProgettuale.persona 
-and AttivitaNonProgettuale.tipo = 'Didattica'
+from Persona pp,AttivitaNonProgettuale, Persona, AttivitaNonProgettuale a1
+where pp.id = a1.persona 
+and a1.tipo = 'Didattica'
 and pp.posizione = 'Ricercatore'
-and pp.id >1;
+and a1.id <> AttivitaNonProgettuale.id
+and a1.persona = AttivitaNonProgettuale.persona;
 
 --8
 select pp.nome , pp.cognome
