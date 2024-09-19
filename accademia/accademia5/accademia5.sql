@@ -50,9 +50,10 @@ where pp.posizione = 'Ricercatore';
 
 --7
 select distinct pp.nome , pp.cognome,pp.posizione
-from Persona pp,AttivitaNonProgettuale, Persona, AttivitaNonProgettuale a1
-where pp.id = a1.persona 
+from Persona pp,AttivitaNonProgettuale, AttivitaNonProgettuale a1
+where pp.id = a1.persona
 and a1.tipo = 'Didattica'
+and AttivitaNonProgettuale = 'Didattica-'
 and pp.posizione = 'Ricercatore'
 and a1.id <> AttivitaNonProgettuale.id
 and a1.persona = AttivitaNonProgettuale.persona;
