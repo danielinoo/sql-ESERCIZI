@@ -88,9 +88,10 @@ group by pr.id,pr.nome
 having count(pp.id) > 2
 
 --11
-select pp.id,pp.nome,pp.cognome
+select  distinct pp.id,pp.nome,pp.cognome
 from AttivitaProgetto as ap, WP, Progetto as pr,persona as pp
 where ap.progetto = WP.progetto and ap.wp = WP.id
     and wp.progetto = pr.id
     and ap.persona = pp.id
-    and ap.persona <> 
+    and pp.posizione = 'Professore Associato'
+group by pp.id,pp.nome,pp.cognome
