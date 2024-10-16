@@ -5,21 +5,24 @@ GROUP BY posizione;
 
 --2
 
-WITH pp AS (
+
+SELECT p,*
+FROM Persona p,
+(
     SELECT  AVG(stipendio) AS media_stipendio
     FROM Persona
     WHERE Persona.posizione = 'Ricercatore'
-)
-SELECT p.*
-FROM Persona p
+)pp
 WHERE  p.posizione = 'Ricercatore'
 and p.stipendio > pp.media_stipendio;
 
+
+
 --3
 
---4
-SELECT p* , SUM(ap.oreDurata) as ore_lavoro
-FROM Persona p,AttivitaProgetto ap
+--4--rivedere
+SELECT p , SUM(ap.oreDurata) as ore_lavoro
+FROM Persona p,AttivitaProgetto 
 JOIN AttivitaProgetto  ap ON p.id = ap.persona
 GROUP BY p
 HAVING SUM(ap.oreDurata) >= 20;
