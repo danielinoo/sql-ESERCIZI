@@ -1,0 +1,9 @@
+Usecase censura(v : Video, r : ragione):
+pre:
+    (v) non è (già) una sottoclasse di censura
+
+post:
+    video v diventa sottoclasse di Censura con:
+    -v.r = ragione
+    -v.istante = istante corrente
+    viene creata oggetto c : Censura(istante_corrente,r)
