@@ -1,12 +1,10 @@
---1 da rivedere
+--1 da rivedere--ok
 SELECT posizione, AVG(stipendio) AS media_stipendio, STDDEV(stipendio) AS deviazione_standard_stipendio
 FROM Persona
 GROUP BY posizione;
 
---2
-
-
-SELECT p,*
+--2--ok
+SELECT p.*
 FROM Persona p,
 (
     SELECT  AVG(stipendio) AS media_stipendio
@@ -29,13 +27,13 @@ HAVING SUM(ap.oreDurata) >= 20;
 
 --5
 
---6
+
+--6--ok
 SELECT p.nome, SUM(ap.oreDurata) AS ore_tot
-FROM Progetto p, AttivitaProgetto
+FROM Progetto p
 JOIN AttivitaProgetto ap ON P.id = ap.progetto
 WHERE p.fine < CURRENT_DATE 
 AND ap.tipo = 'Dimostrazione'
 GROUP BY p.nome;
 
 --7
-
