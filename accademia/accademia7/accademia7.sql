@@ -15,7 +15,7 @@ WHERE  p.posizione = 'Ricercatore'
 and p.stipendio > pp.media_stipendio;
 
 
---3--da rivedere
+--3
 WITH pa as (
     SELECT posizione, AVG(stipendio) AS media_stipendio, STDDEV(stipendio) AS deviazione_standard_stipendio
     FROM Persona
@@ -24,7 +24,7 @@ WITH pa as (
 SELECT p.posizione as posizione,count(p.id) as numero
 FROM Persona p
 JOIN pa ON p.posizione = pa.posizione
-WHERE p.stipendio >= (pa.media_stipendio - pa.deviazione_standard_stipendio)
+WHERE p.stipendio <= (pa.media_stipendio + pa.deviazione_standard_stipendio)
     and p.stipendio >= (pa.media_stipendio - pa.deviazione_standard_stipendio)
 GROUP BY p.posizione
 --4--ok
