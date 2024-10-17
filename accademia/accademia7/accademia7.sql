@@ -15,7 +15,7 @@ WHERE  p.posizione = 'Ricercatore'
 and p.stipendio > pp.media_stipendio;
 
 
---3
+--3--OK
 WITH pa as (
     SELECT posizione, AVG(stipendio) AS media_stipendio, STDDEV(stipendio) AS deviazione_standard_stipendio
     FROM Persona
@@ -27,6 +27,8 @@ JOIN pa ON p.posizione = pa.posizione
 WHERE p.stipendio <= (pa.media_stipendio + pa.deviazione_standard_stipendio)
     and p.stipendio >= (pa.media_stipendio - pa.deviazione_standard_stipendio)
 GROUP BY p.posizione
+
+
 --4--ok
 SELECT p.id,p.nome,p.cognome,p.posizione,p.stipendio , SUM(ap.oreDurata) as ore_lavoro
 FROM AttivitaProgetto ap
