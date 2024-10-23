@@ -30,10 +30,10 @@ WITH ma as (
     SELECT COUNT(ArrPart.arrivo) as numero
     FROM ArrPart
 )
-SELECT l.citta, COUNT(ap.arrivo) as numero_arrivi
+SELECT l.citta,COUNT(ap.arrivo)  as numero_arrivi
 FROM ArrPart ap,Aeroporto a, ma,LuogoAeroporto l 
-WHERE l.aeroporto = a.codice and ap.arrivo = a.codice
+WHERE l.aeroporto = a.codice and ap.arrivo = a.codice 
 GROUP BY l.citta
-HAVING COUNT(ap.arrivo) > avg(ma.numero)
+HAVING COUNT(ap.arrivo )> avg(ma.numero)
 
 --4
