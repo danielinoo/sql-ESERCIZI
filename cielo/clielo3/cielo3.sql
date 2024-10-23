@@ -15,31 +15,25 @@ JOIN ai on ap.partenza = ai.aeroporto_italia
 group by c.nome;
 
 
---2--rivdere
+--2--okk
 WITH media_voli AS (
-    SELECT Volo.comp as nome,AVG(Volo.durataMinuti) as media
+    SELECT AVG(Volo.durataMinuti) as media
     FROM Volo
-	group by Volo.comp
 )
-SELECT c.nome, AVG(Volo.durataMinuti) as durata_media
-FROM  (
-    SELECT Volo.comp as nome,AVG(Volo.durataMinuti) as media
-    FROM Volo
-	group by Volo.comp
-) mv, Volo
-JOIN Compagnia c ON mv.comp= c.nome 
-GROUP BY v.comp
-HAVING AVG(Volo.durataMinuti) > mv.media
+SELECT v.comp, AVG(v.durataMinuti) as durata_media
+FROM Volo v,media_voli
+GROUP BY v.comp,media_voli.media
+HAVING AVG(v.durataMinuti) > media_voli.media
 
 --3--rivedere
-SELECT l.citta, count(ap.arrivo) as numero_arrivi
-FROM ArrPart ap,LuogoAeroporto l,(
-    SELECT AVG(count(ArrPart.arrivo)) as arrivi_media 
+WITH ma as (
+    SELECT COUNT(ArrPart.arrivo) as numero
     FROM ArrPart
-    )apm
-JOIN Aeroporto a ON l.aeroporto = a.codice
-WHERE ap.arrivo = a.codice
-GROUP BY l.citta 
-HAVING count(ap.arrivo) > apm.arrivi_media
+)
+SELECT l.citta, COUNT(ap.arrivo) as numero_arrivi
+FROM ArrPart ap,Aeroporto a, ma,LuogoAeroporto l 
+WHERE l.aeroporto = a.codice and ap.arrivo = a.codice
+GROUP BY l.citta
+HAVING COUNT(ap.arrivo) > avg(ma.numero)
 
 --4
