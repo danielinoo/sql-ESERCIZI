@@ -25,15 +25,29 @@ FROM Volo v,media_voli
 GROUP BY v.comp,media_voli.media
 HAVING AVG(v.durataMinuti) > media_voli.media
 
---3--rivedere
-WITH ma as (
-    SELECT COUNT(ArrPart.arrivo) as numero
-    FROM ArrPart
-)
-SELECT l.citta,COUNT(ap.arrivo)  as numero_arrivi
-FROM ArrPart ap,Aeroporto a, ma,LuogoAeroporto l 
-WHERE l.aeroporto = a.codice and ap.arrivo = a.codice 
-GROUP BY l.citta
-HAVING COUNT(ap.arrivo )> avg(ma.numero)
 
+--3--ok
+--aa-> totale arrivo
+with aa as (SELECT a.codice as ae,count(ap.arrivo) as nta
+from ArrPart ap
+JOIN Aeroporto a ON ap.arrivo = a.codice
+group by a.codice
+),
+--cm--> media citta
+cm as(
+	SELECT avg(aa.nta) as numero
+    FROM aa
+    JOIN LuogoAeroporto la on la.aeroporto = aa.ae
+    JOIN ArrPart ap on ap.arrivo = aa.ae
+)
+--calcolo citta sopra media
+select la.citta, count(ap.arrivo) as numero
+from cm,aa
+JOIN LuogoAeroporto la on la.aeroporto = aa.ae
+JOIN ArrPart ap on ap.arrivo = aa.ae
+group by la.citta,cm.numero
+having count(ap.arrivo) > cm.numero
+
+
+	
 --4
