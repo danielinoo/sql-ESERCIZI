@@ -50,4 +50,55 @@ having count(ap.arrivo) > cm.numero
 
 
 	
---4
+--4--RIVEDERE
+WITH ai as (
+
+    SELECT a.codice as aeroporto_italia
+    FROM LuogoAeroporto l
+    JOIN Aeroporto a ON a.codice = l.aeroporto
+    WHERE l.nazione = 'Italy'
+    group by a.codice
+),
+media_compagnie as (
+ SELECT c.nome nome, AVG(v.durataMinuti) as media_volo
+FROM Compagnia c
+JOIN Volo v ON v.comp = c.nome
+JOIN ArrPart ap ON ap.codice = v.codice and ap.comp= c.nome
+JOIN ai on ap.partenza = ai.aeroporto_italia
+group by c.nome
+)
+SELECT c.nome, avg(v.durataMinuti) as media
+FROM Compagnia c, media_compagnie
+JOIN Volo v ON v.comp = c.nome
+JOIN ArrPart ap ON ap.codice = v.codice and ap.comp= c.nome
+JOIN  ai on ap.partenza = ai.aeroporto_italia
+GROUP BY c.nome
+HAVING AVG(v.durataMinuti) < media_compagnie.media_volo
+
+--5--ok
+WITH media as
+(
+    SELECT l.citta as citta,AVG(v.durataMinuti) as media
+    FROM Volo v, LuogoAeroporto l, ArrPart ap, Aeroporto a
+    WHERE v.codice = ap.codice and v.comp = ap.comp
+        AND ap.arrivo = a.codice
+        AND l.aeroporto = a.codice
+	GROUP BY l.citta
+)
+SELECT l.citta, AVG(v.durataMinuti) as durata_media
+FROM Volo v, LuogoAeroporto l, ArrPart ap, Aeroporto a,media
+WHERE v.codice = ap.codice and v.comp = ap.comp
+        AND arrivo = a.codice
+        AND l.aeroporto = a.codice
+GROUP BY l.citta,media.media
+HAVING AVG(v.durataMinuti) = (STDDEV(v.durataMinuti) + media.media)
+
+--6--okk
+WITH codice as (SELECT partenza from ArrPart)
+SELECT l.nazione, count(distinct l.citta) as citta
+from Volo v, LuogoAeroporto l, ArrPart ap, Aeroporto a,codice
+where v.codice = ap.codice and v.comp = ap.comp
+    AND ap.arrivo = a.codice
+    AND ap.partenza <> codice.partenza
+    AND l.aeroporto = a.codice
+GROUP by l.nazione,l.citta
