@@ -50,30 +50,21 @@ having count(ap.arrivo) > cm.numero
 
 
 	
---4--RIVEDERE
-WITH ai as (
-
-    SELECT a.codice as aeroporto_italia
-    FROM LuogoAeroporto l
-    JOIN Aeroporto a ON a.codice = l.aeroporto
-    WHERE l.nazione = 'Italy'
-    group by a.codice
-),
-media_compagnie as (
- SELECT c.nome nome, AVG(v.durataMinuti) as media_volo
-FROM Compagnia c
-JOIN Volo v ON v.comp = c.nome
-JOIN ArrPart ap ON ap.codice = v.codice and ap.comp= c.nome
-JOIN ai on ap.partenza = ai.aeroporto_italia
-group by c.nome
+--4--ok
+WITH dmv as(
+SELECT avg(v.durataMinuti) as durataMediaVolo
+    FROM ArrPart ap, LuogoAeroporto la, Volo v
+    WHERE la.nazione = 'Italy'
+    AND ap.partenza = la.aeroporto
+    AND v.codice = ap.codice
 )
-SELECT c.nome, avg(v.durataMinuti) as media
-FROM Compagnia c, media_compagnie
-JOIN Volo v ON v.comp = c.nome
-JOIN ArrPart ap ON ap.codice = v.codice and ap.comp= c.nome
-JOIN  ai on ap.partenza = ai.aeroporto_italia
-GROUP BY c.nome
-HAVING AVG(v.durataMinuti) < media_compagnie.media_volo
+SELECT ap.comp, avg(v.durataMinuti) as durataMediaVolo
+    FROM ArrPart ap, LuogoAeroporto la, Volo v, dmv
+    WHERE la.nazione = 'Italy'
+    AND ap.partenza = la.aeroporto
+    AND v.codice = ap.codice
+    group by ap.comp, dmv.durataMediaVolo
+    having avg(v.durataMinuti) < dmv.durataMediaVolo
 
 --5--ok
 WITH media as
