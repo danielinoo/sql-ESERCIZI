@@ -28,12 +28,13 @@ HAVING AVG(v.durataMinuti) > media_voli.media
 
 --3--ok
 --aa-> totale arrivo
-with aa as (SELECT a.codice as ae,count(ap.arrivo) as nta
+with aa as (
+SELECT a.codice as ae,count(ap.arrivo) as nta
 from ArrPart ap
 JOIN Aeroporto a ON ap.arrivo = a.codice
 group by a.codice
 ),
---cm--> media citta
+--cm--media citta
 cm as(
 	SELECT avg(aa.nta) as numero
     FROM aa
