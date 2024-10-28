@@ -1,13 +1,29 @@
---1--rivedre
-SELECT p.id,p.nome,p.cognome
+--1--con union
+SELECT p.id
 FROM Persona p
-JOIN AttivitaProgetto ap ON ap.persona = p.id
-JOIN AttivitaNonProgettuale anp ON anp.persona = p.id
-JOIN Assenza a ON a.persona = p.id
-where ap.giono <> a.giorno and anp.giorno <> a.giorno
-GROUP BY p.id,p.nome,p.cognome
+WHERE
 
---2--rivedere perche ce sta anna bianchi
+EXCEPT
+
+(
+SELECT distinct a.persona
+FROM Assenza a, AttivitaProgetto ap
+WHERE a.persona = ap.persona
+and a.giorno = ap.giorno
+
+Union
+
+SELECT distinct a.persona
+FROM Assenza a,,AttivitaNonProgettuale anp
+WHERE a.persona = anp.persona
+AND a.giorno = anp.giorno
+)
+
+
+
+
+
+--2--rivedere perche ci sta anna bianchi
 --durata progetto pegasus
 WITH durata_progetto AS (
     SELECT id,inizio, fine
@@ -54,26 +70,3 @@ Where wp.progetto = pr.id
 GROUP BY p.id,p.nome, p.cognome
 order by p.id asc
 
---5--DA RIVEDERE
---media budget progetti
-with media_budget as (
-    select avg(budget) as media
-    from Progetto
-),
-
---media ore ricerca
- media_ore_ricerca as (
-    select avg(oreDurata) as ore
-    from AttivitaNonProgettuale
-    where tipo = 'Ricerca'
-)
-
-SELECT pr.nome
-FROM Persona p, media_budget mb, media_ore_ricerca mor,WP wp
-LEFT JOIN   Progetto pr ON wp.progetto = pr.id
-LEFT JOIN  AttivitaProgetto ap on ap.progetto = wp.progetto and ap.wp = wp.id and ap.persona = p.id
-LEFT JOIN AttivitaNonProgettuale anp on anp.persona = p.id and anp.tipo = 'Ricerca'
-WHERE pr.budget < mb.media 
-GROUP by pr.nome
-having sum(anp.oreDurata) > mor.ore
-order by pr.nome asc
