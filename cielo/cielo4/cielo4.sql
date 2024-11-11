@@ -30,22 +30,28 @@ FROM  ArrPart ap, na, Aeroporto a, LuogoAeroporto la
 --3--RIVEDERE
 
 WITH AB as (
-    SELECT count(ap.codice) as num_volo
+    SELECT ap.partenza as partenza , ap.arrivo as arrivo, count(ap.codice) as num_volo
     FROM Aeroporto a, Aeroporto b, ArrPart ap
     WHERE ap.partenza = a.codice and ap.arrivo = b.codice
-
+    GROUP by ap.partenza, ap.arrivo
 ),
 BA as(
-    SELECT count(ap.codice) as num_volo
+    SELECT ap.partenza as partenza , ap.arrivo as arrivo, count(ap.codice) as num_volo
     FROM Aeroporto a, Aeroporto b, ArrPart ap
     WHERE ap.partenza = b.codice and ap.arrivo = a.codice
+    GROUP by ap.partenza, ap.arrivo
 
 )
 
 SELECT DISTINCT ap.partenza, ap.arrivo
 FROM BA, AB, ArrPart ap
-WHERE BA.num_volo = AB.num_volo
-GROUP BY ap.partenza , ap.arrivo
+WHERE ap.partenza = AB.partenza and ap.arrivo = AB.arrivo
+and ap.partenza = BA.partenza and ap.arrivo = BA.arrivo
+AND BA.num_volo = AB.num_volo
+GROUP BY ap.partenza, ap.arrivo,AB.num_volo, BA.num_volo
+
+
+
 
 
 --4--ok
@@ -69,10 +75,27 @@ JOIN LuogoAeroporto la on a.codice = la.aeroporto
 GROUP BY a.codice
 HAving count(la.aeroporto) >= 2
 
---6--rivedere
-WITH la1 as 
+
+--6--OK
+--citta con 1 solo aeroporto
+WITH num_aeroporti as 
 (
-    SELECT la.citta as citta , a.codice as codice 
-    FROM LuogoAeroporto la , Aeroporto a
-    where la.aeroporto = a.codice and la.citta <> la.citta
+select DISTINCT citta , count(la.aeroporto) as n
+from LuogoAeroporto la
+group by citta    
+having count(la.aeroporto) = 1
 )
+SELECT DISTINCT ap.codice,ap.comp,ap.partenza, ap.arrivo
+FROM num_aeroporti, Aeroporto a, LuogoAeroporto la, ArrPart ap
+where num_aeroporti.citta = la.citta
+and la.aeroporto = a.codice
+and ap.partenza = a.codice
+
+
+--7--rivedere
+
+
+
+--8
+
+
