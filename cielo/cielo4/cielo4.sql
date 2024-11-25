@@ -92,10 +92,38 @@ and la.aeroporto = a.codice
 and ap.partenza = a.codice
 
 
---7--rivedere
+--7--query voli diretti e indiretti okk
+select distinct ap.arrivo
+from ArrPart d, ArrPart ap, Volo v
+where d.partenza ='JFK' AND d.arrivo = ap.partenza
 
+union
+
+select distinct ap.arrivo
+from ArrPart ap
+where ap.partenza = 'JFK'
 
 
 --8
+select distinct la1.citta
+from ArrPart d, ArrPart ap, LuogoAeroporto la, Aeroporto a, LuogoAeroporto la1
+where la.aeroporto = a.codice and la.citta = 'Roma'
+ and d.partenza =a.codice AND d.arrivo = ap.partenza 
+ and la1.aeroporto = ap.arrivo --controllo citta d arrivo
+
+union
+
+select distinct la1.citta
+from ArrPart ap, LuogoAeroporto la, Aeroporto a, LuogoAeroporto la1
+where la.aeroporto = a.codice and la.citta = 'Roma' and ap.partenza = a.codice 
+and la1.aeroporto = ap.arrivo  --controllo citta d arrivo
+
+
+--9
+select distinct la.citta
+from ArrPart d, ArrPart ap, LuogoAeroporto la
+where d.partenza ='JFK' AND d.arrivo = ap.partenza 
+HAVING Count(ap.partenza) = 1
+
 
 
