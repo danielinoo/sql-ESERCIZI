@@ -119,11 +119,12 @@ where la.aeroporto = a.codice and la.citta = 'Roma' and ap.partenza = a.codice
 and la1.aeroporto = ap.arrivo  --controllo citta d arrivo
 
 
---9
-select distinct la.citta
-from ArrPart d, ArrPart ap, LuogoAeroporto la
-where d.partenza ='JFK' AND d.arrivo = ap.partenza 
-HAVING Count(ap.partenza) = 1
-
-
+--9--citta da JFK con 1 scalo
+SELECT DISTINCT la.citta
+FROM Aeroporto a1
+JOIN ArrPart partenza ON a1.codice = partenza.partenza
+JOIN ArrPart scalo ON partenza.arrivo=  scalo.partenza
+JOIN Aeroporto arrivo_finale ON  scalo.arrivo = arrivo_finale.codice
+JOIN LuogoAeroporto la ON arrivo_finale.codice = la.aeroporto
+WHERE a1.codice = 'JFK';
 
